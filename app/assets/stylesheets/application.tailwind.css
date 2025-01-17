@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .schedule {
+    @apply flex gap-2.5 m-2;
+  }
+
+  .schedule-timeline {
+    @apply flex flex-col;
+  }
+
+  .schedule-marker {
+    @apply pb-3 last:pb-0;
+  }
+
+  .schedule-spacer, .schedule-column-header {
+    @apply h-10;
+  }
+
+  .schedule-column-header {
+    @apply text-center font-bold;
+  }
+
+  .schedule-columns {
+    @apply flex gap-1.5 w-full;
+  }
+
+  .schedule-column {
+    @apply grow basis-0 flex flex-col;
+  }
+
+  .schedule-events {
+    @apply rounded bg-slate-900 grow flex flex-col h-full;
+  }
+
+  .schedule-event {
+    @apply rounded border border-red-100 p-0.5 mx-0.5 bg-blue-100;
+  }
+}
