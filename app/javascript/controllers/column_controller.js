@@ -42,14 +42,8 @@ export default class extends Controller {
     if (prevOrderBlock && nextOrderBlock) {
       let timeBetweenEvents = Math.floor((nextOrderBlock.dataset.startTime - prevOrderBlock.dataset.endTime) / 60);
       this.modalOutlet.show("Schedule", `Work orders are ${timeBetweenEvents} minutes apart.`);
-    }
-
-    if (prevOrderBlock) {
-      console.log(`Time since last order: ${mouseYTime - prevOrderBlock.dataset.endTime} seconds`);
-    }
-
-    if (nextOrderBlock) {
-      console.log(`Time until next order: ${nextOrderBlock.dataset.startTime - mouseYTime} seconds`);
+    } else {
+      this.modalOutlet.show("Schedule", "This time slot is available.");
     }
   }
 
