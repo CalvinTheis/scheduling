@@ -1,10 +1,20 @@
 <%# Schedule column %>
-<div class="schedule-column" data-controller="column">
+<div
+  class="schedule-column"
+  data-controller="column"
+  data-column-modal-outlet="#modal"
+  data-view-start-time="<%= @start_time %>"
+  data-view-end-time="<%= @end_time %>"
+>
   <div class="schedule-column-header">
     <%= name %>
   </div>
 
-  <div class="schedule-blocks">
+  <div
+    class="schedule-blocks"
+    data-column-target="blocks"
+    data-action="click->column#displayAvailableTime"
+  >
     <% orders.each_with_index do |order, i| %>
       <%= render "block", order: order, index: i %>
     <% end %>

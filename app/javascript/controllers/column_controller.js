@@ -9,6 +9,114 @@ import { Controller } from "@hotwired/stimulus";
  */
 
 /**
+ * Controller for the column component.
+ */
+export default class extends Controller {
+  static targets = ["block", "blocks"];
+  static outlets = ["modal"];
+
+  connect() {
+    this.resizeOverlaps();
+  }
+
+  // On click, display the popup based on the y-position of the mouse.
+  displayAvailableTime(event) {
+    let mouseYTime = this.#getTimeFromMouseY(event.clientY);
+
+    // Ensure that we don't overlap an work order block.
+    if (this.#timeOverlapsBlock(mouseYTime)) {
+      this.modalOutlet.show("Error", "Selected time already has a work order!");
+      return;
+    }
+
+    // Get nearest two blocks to click.
+    let prevOrderBlock = this
+      .blockTargets
+      .toSorted((a, b) => a.dataset.endTime - b.dataset.endTime)
+      .findLast(block => block.dataset.endTime < mouseYTime);
+    let nextOrderBlock = this
+      .blockTargets
+      .toSorted((a, b) => a.dataset.startTime - b.dataset.startTime)
+      .find(block => block.dataset.startTime > mouseYTime);
+
+    if (prevOrderBlock && nextOrderBlock) {
+      let timeBetweenEvents = Math.floor((nextOrderBlock.dataset.startTime - prevOrderBlock.dataset.endTime) / 60);
+      this.modalOutlet.show("Schedule", `Work orders are ${timeBetweenEvents} minutes apart.`);
+    }
+
+    if (prevOrderBlock) {
+      console.log(`Time since last order: ${mouseYTime - prevOrderBlock.dataset.endTime} seconds`);
+    }
+
+    if (nextOrderBlock) {
+      console.log(`Time until next order: ${nextOrderBlock.dataset.startTime - mouseYTime} seconds`);
+    }
+  }
+
+  /**** PRIVATE ****/
+
+  /**
+   * Checks if the given time overlaps a block in this column.
+   * @param {number} time
+   * @return {boolean}
+   */
+  #timeOverlapsBlock(time) {
+    return this.blockTargets.some(block => {
+      let startTime = parseInt(block.dataset.startTime);
+      let endTime = parseInt(block.dataset.endTime);
+      return startTime <= time && time <= endTime;
+    });
+  }
+
+  /**
+   * Get the time in seconds since midnight based on the y-position of the
+   * mouse within the clicked element.
+   * @param {number} mouseY - the y-position of the mouse.
+   * @return {number} - time of day in seconds since midnight
+   */
+  #getTimeFromMouseY(mouseY) {
+    let rect = this.blocksTarget.getBoundingClientRect();
+
+    // Get y-position relative to the top of the element.
+    let mouseYRatio = (mouseY - rect.top) / (rect.bottom - rect.top);
+
+    // Get time value corresponding to mouse position
+    let viewStartTime = parseInt(this.element.dataset.viewStartTime);
+    let viewEndTime = parseInt(this.element.dataset.viewEndTime);
+
+    return viewStartTime + mouseYRatio * (viewEndTime - viewStartTime);
+  }
+
+  /**
+   * Horizontally resize schedule blocks so that blocks with overlapping time
+   * ranges don't overlap on the schedule.
+   */
+  resizeOverlaps() {
+    // Build list of intervals
+    /** @type {Interval[]} */
+    const workOrderIntervals = this.blockTargets.map(block => ({
+      start: parseInt(block.dataset.startTime),
+      end: parseInt(block.dataset.endTime),
+      blocks: [block],
+    }));
+
+    // Get merged intervals
+    const filledIntervals = mergeOverlaps(workOrderIntervals);
+
+    // Resize blocks in all overlapping intervals
+    for (let interval of filledIntervals) {
+      let widthRatio = 1 / interval.blocks.length;
+
+      // Resize each block to its proper width.
+      interval.blocks.map(block => block.style.width = `calc(${widthRatio * 100}% - 1rem)`);
+
+      // Move each block to its proper horizontal location.
+      interval.blocks.map((block, i) => block.style.left = `${widthRatio * 100 * i}%`)
+    }
+  }
+}
+
+/**
  * Merges two arrays while deduplicating elements between the two.
  * @param {Array} array1
  * @param {Array} array2
@@ -23,7 +131,7 @@ const merge = (array1, array2) => {
  * @param {Interval[]} intervals - The list of intervals to merge.
  * @return {Interval[]} - The merged list of intervals.
  */
-const merge_overlaps = (intervals) => {
+const mergeOverlaps = (intervals) => {
   if (intervals.length == 0)
     return [];
 
@@ -43,43 +151,4 @@ const merge_overlaps = (intervals) => {
   }
 
   return result;
-}
-
-/**
- * Controller for the column component.
- */
-export default class extends Controller {
-  static targets = ["block"];
-
-  connect() {
-    this.resize_overlaps();
-  }
-
-  /**
-   * Horizontally resize schedule blocks so that blocks with overlapping time
-   * ranges don't overlap on the schedule.
-   */
-  resize_overlaps() {
-    // Build list of intervals
-    /** @type {Interval[]} */
-    const event_intervals = this.blockTargets.map(block => ({
-      start: parseInt(block.dataset.starttime),
-      end: parseInt(block.dataset.endtime),
-      blocks: [block],
-    }));
-
-    // Get merged intervals
-    const filled_intervals = merge_overlaps(event_intervals);
-
-    // Resize blocks in all overlapping intervals
-    for (let interval of filled_intervals) {
-      let width_ratio = 1 / interval.blocks.length;
-
-      // Resize each block to its proper width.
-      interval.blocks.map(block => block.style.width = `calc(${width_ratio * 100}% - 1rem)`);
-
-      // Move each block to its proper horizontal location.
-      interval.blocks.map((block, i) => block.style.left = `${width_ratio * 100 * i}%`)
-    }
-  }
 }

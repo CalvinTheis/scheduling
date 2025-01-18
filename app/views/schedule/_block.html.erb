@@ -2,8 +2,9 @@
 <div
   class="schedule-block"
   data-column-target="block"
-  data-starttime="<%= order.time.seconds_since_midnight %>"
-  data-endtime="<%= (order.time + order.duration*60).seconds_since_midnight %>"
+  data-start-time="<%= order.time.seconds_since_midnight %>"
+  data-end-time="<%= (order.time + order.duration*60).seconds_since_midnight %>"
+  data-location="<%= order.location_name %>"
   style="top: <%= top_percent_for_time order.time %>%; height: <%= height_percent_for_time order.duration %>%; overflow: scroll;"
 >
   <div class="schedule-block-location-city">
