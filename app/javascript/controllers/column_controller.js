@@ -134,13 +134,16 @@ const mergeOverlaps = (intervals) => {
   let result = [intervals[0]];
 
   for (let interval of intervals) {
+    // If intervals overlap
     if (result[result.length - 1].end >= interval.start)
+      // Merge them
       result[result.length - 1] = {
         begin: result[result.length - 1].start,
         end: Math.max(result[result.length - 1].end, interval.end),
         blocks: merge(result[result.length - 1].blocks, interval.blocks),
       };
     else
+      // Else, add new interval.
       result.push(interval);
   }
 
