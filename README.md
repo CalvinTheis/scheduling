@@ -7,7 +7,7 @@ during development. It uses the default SQLite database, so no database setup
 is required beyond running:
 
 ```shell
-rails db:migrate.
+rails db:migrate
 ```
 
 To run the server, run:
