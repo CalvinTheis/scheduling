@@ -29,7 +29,8 @@ namespace :import do
         headers[1..].zip(row[1..]).each do |header, cell|
           if header == "time" then
             # Parse the file's custom time format.
-            entity[header] = Time.strptime(cell, "%d/%m/%y %H:%M")
+            entity[header] = Time.strptime(cell + " UTC", "%d/%m/%y %H:%M %Z")
+            puts "#{cell} becomes #{entity[header]}"
           else
             entity[header] = cell
           end
