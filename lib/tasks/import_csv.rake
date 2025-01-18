@@ -12,7 +12,6 @@ namespace :import do
       # Get headers and skip.
       headers = csv.shift
 
-      puts "Importing data from #{filename}..."
       n_imported = 0
       n_updated = 0
       csv.each do |row|
@@ -39,10 +38,18 @@ namespace :import do
       end
       puts "Imported #{n_imported} records."
       puts "Updated #{n_updated} records."
+    rescue Errno::ENOENT
+      puts "Error importing file #{filename}: File does not exist."
     end
 
-    import_csv.call("locations.csv", Location)
-    import_csv.call("technicians.csv", Technician)
-    import_csv.call("work_orders.csv", WorkOrder)
+    filename_table_pairs = [
+      [ "locations.csv", Location ],
+      [ "technicians.csv", Technician ],
+      [ "work_orders.csv", WorkOrder ]
+    ]
+
+    filename_table_pairs.each do |filename, table|
+      import_csv.call(filename, table)
+    end
   end
 end
