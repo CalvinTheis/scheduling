@@ -3,27 +3,14 @@
   <div class="schedule mt-4 mb-4">
     <div class="schedule-timeline">
       <div class="schedule-spacer"></div>
-      <% @start_time.step(@end_time, 30*60) do |time| %>
+      <% @start_time.step(@end_time, 3600) do |time| %>
         <div class="schedule-marker"><%= format_time time %></div>
       <% end %>
     </div>
 
     <div class="schedule-columns">
-      <% @technicians.each do |technician| %>
-        <div class="schedule-column">
-          <div class="schedule-column-header">
-            <%= technician.name %>
-          </div>
-
-          <div class="schedule-events">
-            <div class="schedule-event">
-              <p class="schedule-event-location-name">Location Name</p>
-              <p class="schedule-event-location-city">City</p>
-              <p class="schedule-event-start-time">Start Time</p>
-              <p class="schedule-event-price">Price</p>
-            </div>
-          </div>
-        </div>
+      <% @orders_by_name.each do |name, orders| %>
+        <%= render "column", name: name, orders: orders %>
       <% end %>
     </div>
   </div>

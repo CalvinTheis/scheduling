@@ -1,0 +1,12 @@
+<%# Schedule column %>
+<div class="schedule-column" data-controller="column">
+  <div class="schedule-column-header">
+    <%= name %>
+  </div>
+
+  <div class="schedule-blocks">
+    <% orders.each_with_index do |order, i| %>
+      <%= render "block", order: order, index: i %>
+    <% end %>
+  </div>
+</div>

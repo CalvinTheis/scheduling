@@ -12,7 +12,7 @@
   }
 
   .schedule-marker {
-    @apply pb-3 last:pb-0;
+    @apply h-16 last:h-4;
   }
 
   .schedule-spacer, .schedule-column-header {
@@ -24,18 +24,38 @@
   }
 
   .schedule-columns {
-    @apply flex gap-1.5 w-full;
+    @apply flex gap-0 w-full;
   }
 
   .schedule-column {
     @apply grow basis-0 flex flex-col;
   }
 
-  .schedule-events {
-    @apply rounded bg-slate-900 grow flex flex-col h-full;
+  .schedule-blocks {
+    @apply bg-slate-900 grow flex flex-col h-full relative border-r;
   }
 
-  .schedule-event {
-    @apply rounded border border-red-100 p-0.5 mx-0.5 bg-blue-100;
+  .schedule-block {
+    @apply rounded border border-blue-900 p-1 bg-blue-100 absolute mx-2 w-[calc(100%-1rem)] overflow-scroll;
+
+    span {
+      word-wrap: none;
+    }
   }
-}
+
+  .schedule-block-location-city {
+    @apply flex basis-0 justify-between;
+
+    > span.schedule_block_location {
+      @apply font-semibold mb-1;
+    }
+
+    > span.schedule-block-city {
+      @apply mb-1;
+    }
+  }
+
+  .schedule-block-time-price {
+    @apply text-xs font-light flex basis-0 justify-between;
+  }
+ }
