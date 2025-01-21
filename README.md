@@ -10,11 +10,20 @@ required beyond running:
 rails db:migrate
 ```
 
-To run the server, run:
+To run the server in development mode, run:
 
 ```shell
+./bin/dev
+```
+
+To run it in production mode, run:
+
+```shell
+rails assets:precompile
 rails server
 ```
+
+Make sure to migrate and import the data in the production environment first.
 
 ## Importing Data
 
