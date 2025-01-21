@@ -93,7 +93,6 @@ export default class extends Controller {
     this.blockTargets.map(block => {
       let startTime = parseInt(block.dataset.startTime);
       let duration = parseInt(block.dataset.endTime) - startTime;
-      console.log(this.#topPercentForTime(startTime));
       block.style.top = `${this.#topPercentForTime(startTime)}%`;
       block.style.height = `${this.#heightPercentForDuration(duration)}%`;
     })
