@@ -24,6 +24,7 @@ rails server
 ```
 
 Make sure to migrate and import the data in the production environment first.
+This project may also be run in production mode using Docker.
 
 ## Importing Data
 
