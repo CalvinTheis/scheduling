@@ -16,7 +16,9 @@ export default class extends Controller {
   static outlets = ["modal"];
 
   connect() {
-    this.resizeOverlaps();
+    this.viewStartTime = parseInt(this.element.dataset.viewStartTime);
+    this.viewEndTime = parseInt(this.element.dataset.viewEndTime);
+    this.#renderBlock();
   }
 
   // On click, display the popup based on the y-position of the mouse.
@@ -75,18 +77,28 @@ export default class extends Controller {
     let mouseYRatio = (mouseY - rect.top) / (rect.bottom - rect.top);
 
     // Get time value corresponding to mouse position
-    let viewStartTime = parseInt(this.element.dataset.viewStartTime);
-    let viewEndTime = parseInt(this.element.dataset.viewEndTime);
-
-    return viewStartTime + mouseYRatio * (viewEndTime - viewStartTime);
+    return this.viewStartTime + mouseYRatio * (this.viewEndTime - this.viewStartTime);
   }
 
   /**
-   * Horizontally resize schedule blocks so that blocks with overlapping time
-   * ranges don't overlap on the schedule.
+   * Position and resize a block in its column to have:
+   * 1. a vertical offset from the top of the column corresponding to the work order's start time.
+   * 2. a height corresponding to the work order's duration.
+   * 3. a horizontal offset and width as to not overlap any other block in the column.
+   *
+   * Finally, the element is hidden by default to prevent artifacts, so unhide the element.
    */
-  resizeOverlaps() {
-    // Build list of intervals
+  #renderBlock() {
+    // Position and resize the block vertically:
+    this.blockTargets.map(block => {
+      let startTime = parseInt(block.dataset.startTime);
+      let duration = parseInt(block.dataset.endTime) - startTime;
+      console.log(this.#topPercentForTime(startTime));
+      block.style.top = `${this.#topPercentForTime(startTime)}%`;
+      block.style.height = `${this.#heightPercentForDuration(duration)}%`;
+    })
+
+    // Resize and reposition the blocks so they don't overlap.
     /** @type {Interval[]} */
     const workOrderIntervals = this.blockTargets.map(block => ({
       start: parseInt(block.dataset.startTime),
@@ -107,6 +119,27 @@ export default class extends Controller {
       // Move each block to its proper horizontal location.
       interval.blocks.map((block, i) => block.style.left = `${widthRatio * 100 * i}%`)
     }
+
+    // Unhide the elements.
+    this.blockTargets.map(block => block.classList.remove("hidden"));
+  }
+
+  /**
+   * Calcuate the height of a time block given its duration.
+   * @param {number} duration - duration in seconds.
+   * @return {number} - the height of the time block as a percentage.
+   */
+  #heightPercentForDuration(duration) {
+    return 100 * duration / (this.viewEndTime - this.viewStartTime);
+  }
+
+  /**
+   * Calcuate the offset from the top of the column given the start time.
+   * @param {number} time - time of day in seconds since midnight.
+   * @return {number} - the offset as a percentage.
+   */
+  #topPercentForTime(time) {
+    return 100 * (time - this.viewStartTime) / (this.viewEndTime - this.viewStartTime);
   }
 }
 
@@ -130,7 +163,6 @@ const mergeOverlaps = (intervals) => {
     return [];
 
   intervals.sort((a, b) => a - b);
-  // let result = [intervals[0]];
   let result = [intervals[0]];
 
   for (let interval of intervals) {
