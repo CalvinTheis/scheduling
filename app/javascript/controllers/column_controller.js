@@ -102,7 +102,7 @@ export default class extends Controller {
       let widthRatio = 1 / interval.blocks.length;
 
       // Resize each block to its proper width.
-      interval.blocks.map(block => block.style.width = `calc(${widthRatio * 100}% - 1rem)`);
+      interval.blocks.map(block => block.style.width = `${widthRatio * 100}%`);
 
       // Move each block to its proper horizontal location.
       interval.blocks.map((block, i) => block.style.left = `${widthRatio * 100 * i}%`)

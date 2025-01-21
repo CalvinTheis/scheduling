@@ -12,7 +12,8 @@
   }
 
   .schedule-marker {
-    @apply h-16 last:h-4;
+    @apply h-16 last:h-0 text-xs text-center block relative;
+    inset-block-start: -0.75rem;
   }
 
   .schedule-spacer, .schedule-column-header {
@@ -36,7 +37,7 @@
   }
 
   .schedule-block {
-    @apply rounded border border-blue-900 p-1 bg-blue-100 absolute mx-2 w-[calc(100%-1rem)] overflow-scroll;
+    @apply rounded border border-blue-900 p-1 bg-blue-100 absolute w-full overflow-scroll;
 
     span {
       word-wrap: none;
